@@ -21,15 +21,13 @@ function fetch_input(day::Int, year::Int = 2024)::Union{String, Nothing}
 end
 
 
-function delimit_each_line_by_whitespace(input_data::String)::Array{Array{String, 1}, 1}
-    for line in split(input_data, '\n')
-        println(split(line))
-    end
+function digest_as_lines(input_data::String)::Array{String, 1}
+    lines::Array{String, 1} = readlines(IOBuffer(input_data))
+    return lines
 end
 
+
 if abspath(PROGRAM_FILE) === @__FILE__
-    # Sample
-    day = 1
-    input_data = fetch_input(day)
-    println(delimit_each_line_by_whitespace(input_data))
+    input_data = fetch_input(1)
+    println(digest_as_lines(input_data))
 end

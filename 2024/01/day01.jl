@@ -1,18 +1,11 @@
 include("../utils.jl")
 
 
-function get_day1_input()::String
-    return fetch_input(1)
-end
-
 function produce_sorted_list_from_day1_input(input_data::String)::Tuple{Array{Int64, 1}, Array{Int64, 1}}
     list1::Array{Int64, 1} = Int64[]
     list2::Array{Int64, 1} = Int64[]
 
-    for line in split(input_data, '\n')
-        if line == ""
-            continue
-        end
+    for line in readlines(IOBuffer(input_data))
         first, second = split(line)
         push!(list1, parse(Int64, first))
         push!(list2, parse(Int64, second))
@@ -79,7 +72,7 @@ end
 
 
 if abspath(PROGRAM_FILE) === @__FILE__
-    input_data = get_day1_input()
+    input_data = fetch_input(1)
     sorted_list1, sorted_list2 = produce_sorted_list_from_day1_input(input_data)
     println("Part 1: $(calculate_sum_of_differences(sorted_list1, sorted_list2))")
     println("Part 2: $(calculate_similarity(sorted_list1, sorted_list2))")
