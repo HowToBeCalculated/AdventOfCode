@@ -30,6 +30,7 @@ function is_safe_report_with_tolerance(report::Array{Int64}, tolerance::Int64 = 
     # TODO: support tolerances other than 1
     @assert tolerance == 1 "Tolerance must be 1"
 
+    # account for the first element being unsafe
     if is_safe_report(report[2:end])
         return true
     end
