@@ -27,7 +27,14 @@ function digest_as_lines(input_data::String)::Array{String, 1}
 end
 
 
+function digest_as_matrix(input_data::String)::Array{Array{Char, 1}, 1}
+    lines::Array{String, 1} = readlines(IOBuffer(input_data))
+    matrix::Array{Array{Char, 1}, 1} = [collect(line) for line in lines]
+    return matrix
+end
+
+
 if abspath(PROGRAM_FILE) === @__FILE__
-    input_data = fetch_input(1)
-    println(digest_as_lines(input_data))
+    input_data = fetch_input(4)
+    println(digest_as_matrix(input_data))
 end
