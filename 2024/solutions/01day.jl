@@ -1,7 +1,7 @@
 include("../utils.jl")
 
 
-function produce_sorted_list_from_day1_input(input_data::String)::Tuple{Array{Int64, 1}, Array{Int64, 1}}
+function produce_sorted_list_from_day1_input(input_data::String)::Tuple{Vector{Int64}, Vector{Int64}}
     list1::Array{Int64, 1} = Int64[]
     list2::Array{Int64, 1} = Int64[]
 
@@ -17,7 +17,7 @@ function produce_sorted_list_from_day1_input(input_data::String)::Tuple{Array{In
     return sorted_list1, sorted_list2
 end
 
-function calculate_sum_of_differences(sorted_list1::Array{Int64, 1}, sorted_list2::Array{Int64, 1})
+function calculate_sum_of_differences(sorted_list1::Vector{Int64}, sorted_list2::Vector{Int64})
     # Interestingly, this function is ok here in this scope but Julia complains if a loop otherwise updates global var
     sum_of_differences::Int64 = 0
 
@@ -29,11 +29,11 @@ function calculate_sum_of_differences(sorted_list1::Array{Int64, 1}, sorted_list
 end
 
 # inefficient as it doesn't need to scan the list as it's already sorted
-function num_in_list(num::Int64, list::Array{Int64, 1})::Int64
+function num_in_list(num::Int64, list::Vector{Int64})::Int64
     return sum(num .== list)
 end
 
-function calculate_similarity(sorted_list1::Array{Int64, 1}, sorted_list2::Array{Int64, 1})::Int64
+function calculate_similarity(sorted_list1::Vector{Int64}, sorted_list2::Vector{Int64})::Int64
     similarity::Int64 = 0
 
     queued_up::Int64 = -1
@@ -74,6 +74,6 @@ end
 if abspath(PROGRAM_FILE) === @__FILE__
     input_data = fetch_input(1)
     sorted_list1, sorted_list2 = produce_sorted_list_from_day1_input(input_data)
-    println("Part 1: $(calculate_sum_of_differences(sorted_list1, sorted_list2))")
-    println("Part 2: $(calculate_similarity(sorted_list1, sorted_list2))")
+    @time println("Part 1: $(calculate_sum_of_differences(sorted_list1, sorted_list2))")
+    @time println("Part 2: $(calculate_similarity(sorted_list1, sorted_list2))")
 end

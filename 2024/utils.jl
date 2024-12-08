@@ -21,20 +21,20 @@ function fetch_input(day::Int, year::Int = 2024)::Union{String, Nothing}
 end
 
 
-function digest_as_lines(input_data::String)::Array{String, 1}
+function digest_as_lines(input_data::String)::Vector{String}
     lines::Array{String, 1} = readlines(IOBuffer(input_data))
     return lines
 end
 
 
-function digest_as_matrix(input_data::String)::Array{Array{Char, 1}, 1}
+function digest_as_vector_of_vectors(input_data::String)::Vector{Vector{Char}}
     lines::Array{String, 1} = readlines(IOBuffer(input_data))
-    matrix::Array{Array{Char, 1}, 1} = [collect(line) for line in lines]
+    matrix::Vector{Vector{Char}} = [collect(line) for line in lines]
     return matrix
 end
 
 
 if abspath(PROGRAM_FILE) === @__FILE__
     input_data = fetch_input(4)
-    println(digest_as_matrix(input_data))
+    println(digest_as_vector_of_vectors(input_data))
 end

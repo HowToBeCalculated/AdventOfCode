@@ -133,7 +133,7 @@ end
 
 if abspath(PROGRAM_FILE) === @__FILE__
     input_data::String = fetch_input(6)
-    input_matrix::Array{Array{Char, 1}, 1} = digest_as_matrix(input_data)
+    input_matrix::Vector{Vector{Char}} = digest_as_vector_of_vectors(input_data)
     @time println("Part 1: $(guard_traveled_spaces(input_matrix))")
     @time println("Part 2: $(ways_to_form_guard_loops(input_matrix))")
 end

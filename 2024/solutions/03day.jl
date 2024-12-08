@@ -22,7 +22,7 @@ function clean_input_for_dos_and_donts(input_data::String)::String
     # start in a state of being allowed
     is_allowed::Bool = true
 
-    cleaned_parts::Array{String} = String[]
+    cleaned_parts::Vector{String} = String[]
 
     while processed_string != ""
         # look for next DONT if in DO state, or vice versa
@@ -44,6 +44,6 @@ end
 if abspath(PROGRAM_FILE) === @__FILE__
     input_data::String = fetch_input(3)
 
-    println("Part 1: $(perform_each_valid_mul(input_data))")
-    println("Part 2: $(perform_each_valid_mul(clean_input_for_dos_and_donts(input_data)))")
+    @time println("Part 1: $(perform_each_valid_mul(input_data))")
+    @time println("Part 2: $(perform_each_valid_mul(clean_input_for_dos_and_donts(input_data)))")
 end

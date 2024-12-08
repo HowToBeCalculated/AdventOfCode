@@ -22,7 +22,7 @@ ALL_DIRECTIONS::Array{Direction, 1} = [
 
 
 function helper_follow_line(
-    input_matrix::Array{Array{Char, 1}, 1},
+    input_matrix::Vector{Vector{Char}},
     start::Tuple{Int64, Int64},
     direction::Direction,
     rest_of_word::String
@@ -45,7 +45,7 @@ function helper_follow_line(
     return true
 end
 
-function solve_word_search(input_matrix::Array{Array{Char, 1}, 1}, word::String = WORD)::Int64
+function solve_word_search(input_matrix::Vector{Vector{Char}}, word::String = WORD)::Int64
     first_char::Char = word[1]
     rest_of_word::String = word[2:end]
     cnt::Int64 = 0
@@ -67,7 +67,7 @@ end
 
 
 function x_marks_the_spot(
-    input_matrix::Array{Array{Char, 1}, 1},
+    input_matrix::Vector{Vector{Char}},
     start::Tuple{Int64, Int64},
     full_word::String
 )::Bool
@@ -100,7 +100,7 @@ function x_marks_the_spot(
     return true
 end
 
-function solve_x_search(input_matrix::Array{Array{Char, 1}, 1}, word::String = WORD[2:end])::Int64
+function solve_x_search(input_matrix::Vector{Vector{Char}}, word::String = WORD[2:end])::Int64
     @assert length(word) == 3 "Only works for 3 letter words"
 
     middle_char = word[2]
@@ -122,8 +122,8 @@ end
 
 if abspath(PROGRAM_FILE) === @__FILE__
     input_data::String = fetch_input(4)
-    input_matrix::Array{Array{Char, 1}, 1} = digest_as_matrix(input_data)
+    input_matrix::Vector{Vector{Char}} = digest_as_vector_of_vectors(input_data)
 
-    println("Part 1: $(solve_word_search(input_matrix))")
-    println("Part 2: $(solve_x_search(input_matrix))")
+    @time println("Part 1: $(solve_word_search(input_matrix))")
+    @time println("Part 2: $(solve_x_search(input_matrix))")
 end

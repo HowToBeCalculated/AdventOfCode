@@ -106,7 +106,7 @@ end
 
 if abspath(PROGRAM_FILE) === @__FILE__
     input_data::String = fetch_input(5)
-    page_validator, pages = construct_page_validator_and_get_lines(input_data)
-    println(solve_part_1(page_validator, pages))
-    println(solve_part_2(page_validator, pages))
+    page_validator::PageValidator, pages::Vector{Vector{Int64}} = construct_page_validator_and_get_lines(input_data)
+    @time println(solve_part_1(page_validator, pages))
+    @time println(solve_part_2(page_validator, pages))
 end
