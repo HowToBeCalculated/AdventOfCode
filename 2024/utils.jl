@@ -49,6 +49,40 @@ function make_in_bounds_function(n::Int64, m::Int64)::Function
     return f
 end
 
+function run_length_encoding(arr::Vector{T})::Vector{Tuple{T, Int64}} where T
+    result::Vector{Tuple{T, Int64}} = Tuple{T, Int64}[]
+
+    # initialize the first element
+    current_element = arr[1]
+    current_count = 1
+
+    for i in 2:length(arr)
+        if arr[i] == current_element
+            current_count += 1
+        else
+            push!(result, (current_element, current_count))
+            current_element = arr[i]
+            current_count = 1
+        end
+    end
+
+    # push the last element
+    push!(result, (current_element, current_count))
+
+    return result
+end
+
+function unravel_run_length_encoding(arr::Vector{Tuple{T, Int64}})::Vector{T} where T
+    result::Vector{T} = T[]
+    for (element, count) in arr
+        for _ in 1:count
+            push!(result, element)
+        end
+    end
+    return result
+end
+
+
 if abspath(PROGRAM_FILE) === @__FILE__
     input_data = fetch_input(4)
     println(digest_as_vector_of_vectors(input_data))
