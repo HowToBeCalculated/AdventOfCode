@@ -6,7 +6,6 @@ const Coordinates = Tuple{Int64, Int64}
 TRAIL_HEAD = 0
 TRAIL_END = 9
 
-
 up_down_left_right::Vector{Coordinates} = Coordinates[
     (-1, 0),
     (1, 0),
@@ -14,9 +13,9 @@ up_down_left_right::Vector{Coordinates} = Coordinates[
     (0, 1),
 ]
 
-function parse_inputs_as_integers(input_vector::String)::Vector{Vector{Int64}}
+function parse_inputs_as_integers(input_vector::String)::Array{Int64, 2}
     res::Vector{Vector{Int64}} = [parse.(Int64, split(line, "")) for line in digest_as_lines(input_vector)]
-    return res
+    return hcat(res...)
 end
 
 mutable struct Trail
@@ -26,22 +25,26 @@ mutable struct Trail
     ending_locations::Vector{Coordinates}
 end
 
-function move_one_space(trail::Trail, input_matrix::Vector{Vector{Int64}})::Nothing
-    inbounds_function = make_in_bounds_function(length(input_matrix), length(input_matrix[1]))
+function move_one_space(trail::Trail, input_matrix::Array{Int64, 2})::Nothing
+    inbounds_function = make_in_bounds_function(size(input_matrix)...)
     new_frontier::Vector{Coordinates} = Coordinates[]
 
     for location in trail.frontier
-        elevation = input_matrix[location[1]][location[2]]
+        elevation = input_matrix[location...]
         push!(trail.traveled, location)
 
         for (i, j) in up_down_left_right
             next_location = location .+ (i, j)
 
-            if !inbounds_function(next_location) || (input_matrix[next_location[1]][next_location[2]] - elevation) != 1
+            if !inbounds_function(next_location)
                 continue
             end
 
-            next_elevation = input_matrix[next_location[1]][next_location[2]]
+            next_elevation = input_matrix[next_location...]
+            if (next_elevation - elevation) != 1
+                continue
+            end
+
             if next_location in trail.traveled
                 continue
             elseif next_elevation == TRAIL_END
@@ -56,23 +59,21 @@ function move_one_space(trail::Trail, input_matrix::Vector{Vector{Int64}})::Noth
     return nothing
 end
 
-function find_all_trail_heads(input_matrix::Vector{Vector{Int64}})::Vector{Trail}
+function find_all_trail_heads(input_matrix::Array{Int64, 2})::Vector{Trail}
     trail_heads::Vector{Trail} = Trail[]
 
-    # Took out the following: for idx in CartesianIndices(input_matrix)
-    # Julia arrays are column-major which was messing me up when trying to use Array{Int64, 2} instead of Vector{Vector{Int64}}
-    for (i, row) in enumerate(input_matrix)
-        for (j, elevation) in enumerate(row)
-            if elevation == TRAIL_HEAD
-                push!(trail_heads, Trail((i, j), Vector{Tuple{Int64, Int64}}(), [(i, j),], Vector{Tuple{Int64, Int64}}()))
-            end
+    for idx in CartesianIndices(input_matrix)
+        position = Tuple(idx)
+        elevation = input_matrix[position...]
+        if elevation == TRAIL_HEAD
+            push!(trail_heads, Trail(position, Vector{Tuple{Int64, Int64}}(), [position,], Vector{Tuple{Int64, Int64}}()))
         end
     end
 
     return trail_heads
 end
 
-function fill_out_trails(trail_heads::Vector{Trail}, input_matrix::Vector{Vector{Int64}})::Nothing
+function fill_out_trails(trail_heads::Vector{Trail}, input_matrix::Array{Int64, 2})::Nothing
     for trail in trail_heads
         while !isempty(trail.frontier)
             move_one_space(trail, input_matrix)
@@ -85,7 +86,7 @@ end
 if abspath(PROGRAM_FILE) === @__FILE__
     input_data::String = fetch_input(10)
 
-    input_matrix::Vector{Vector{Int64}} = parse_inputs_as_integers(input_data)
+    input_matrix::Array{Int64, 2} = parse_inputs_as_integers(input_data)
     trail_heads::Vector{Trail} = find_all_trail_heads(input_matrix)
 
     @time fill_out_trails(trail_heads, input_matrix)
