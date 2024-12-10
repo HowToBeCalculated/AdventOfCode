@@ -96,6 +96,43 @@ function shift_whole_files(block_space::Vector{Union{Int64, Nothing}})::Vector{U
     return unravel_run_length_encoding(condensed_rle)
 end
 
+function inefficient_shift_whole_files(block_space::Vector{Union{Int64, Nothing}})::Vector{Union{Int64, Nothing}}
+    rle::Vector{Tuple{Union{Int64, Nothing}, Int64}} = run_length_encoding(block_space)
+    any_change::Bool = true
+
+    while any_change
+        any_change = false
+        for (i, (i_file_num, i_file_size)) in zip(length(rle):-1:1, reverse(rle))
+            
+            if isnothing(i_file_num)
+                continue
+            end
+            for (j, (j_file_num, j_file_size)) in enumerate(rle)
+                if isnothing(j_file_num) && j < i && i_file_size <= j_file_size
+                    any_change = true
+                    j_file_size -= i_file_size
+
+                    # replace the moved file with an open space
+                    rle[i] = (nothing, i_file_size)
+
+                    # update the file that was moved
+                    rle[j] = (i_file_num, i_file_size)
+
+                    # add back in remaining open space
+                    if j_file_size > 0
+                        insert!(rle, j + 1, (nothing, j_file_size))  
+                    end   
+                    break   
+                end
+            end
+            if any_change
+                break
+            end
+        end
+    end
+    return unravel_run_length_encoding(rle)
+end
+
 function determine_condense_score(
     block_space::Vector{Union{Int64, Nothing}},
     condense_function::Function
@@ -115,11 +152,10 @@ end
 
 if abspath(PROGRAM_FILE) === @__FILE__
     input_data::String = fetch_input(9)
-    # input_data = "2333133121414131402"
     input_vector::Vector{Int64} = parse_inputs_as_integers(input_data)
 
     block_space = make_open_positions_view(input_vector)
 
     @time println("Part 1: $(determine_condense_score(block_space, file_system_fragmentation))")
-    # @time println("Part 2: $(determine_condense_score(block_space, shift_whole_files))")
+    @time println("Part 2: $(determine_condense_score(block_space, shift_whole_files))")
 end
