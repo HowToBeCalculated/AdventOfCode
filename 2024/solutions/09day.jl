@@ -13,28 +13,14 @@ end
 
 function make_open_positions_view(input_vector::Vector{Int64})::Vector{Union{Int64, Nothing}}
     block_space::Vector{Union{Int64, Nothing}} = []
-    idx = 0
-    iter = Iterators.Stateful(input_vector)
 
-    while true
-        # the first element is the number of blocks used
-        blocks_used = popfirst!(iter)
-        for _ in 1:blocks_used
-            push!(block_space, idx)
-        end
-        idx += 1
-
-        # this will be empty for the last element (i.e. odd # of elements)
-        if isempty(iter)
-            break
-        end
-
-        # the subsequent element is the number of free blocks
-        free_blocks = popfirst!(iter)
-        for _ in 1:free_blocks
-            push!(block_space, nothing)
+    for (i, num) in enumerate(input_vector)
+        nothing_or_num = isodd(i) ? floor(i / 2) : nothing
+        for _ in 1:num
+            push!(block_space, nothing_or_num)
         end
     end
+
     return block_space
 end
 
@@ -43,7 +29,6 @@ function file_system_fragmentation(block_space::Vector{Union{Int64, Nothing}})::
     last_block_number = length(block_space) + 1
 
     for (idx, block) in enumerate(block_space)
-
         # is we are at the last block, we have gone through all the blocks
         if (idx == last_block_number)
             break
@@ -130,10 +115,11 @@ end
 
 if abspath(PROGRAM_FILE) === @__FILE__
     input_data::String = fetch_input(9)
+    # input_data = "2333133121414131402"
     input_vector::Vector{Int64} = parse_inputs_as_integers(input_data)
 
     block_space = make_open_positions_view(input_vector)
 
     @time println("Part 1: $(determine_condense_score(block_space, file_system_fragmentation))")
-    @time println("Part 2: $(determine_condense_score(block_space, shift_whole_files))")
+    # @time println("Part 2: $(determine_condense_score(block_space, shift_whole_files))")
 end
