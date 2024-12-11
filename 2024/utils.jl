@@ -20,6 +20,11 @@ function fetch_input(day::Int, year::Int = 2024)::Union{String, Nothing}
     end
 end
 
+function digest_as_vector_of_integers(input_data::String, delimiter::String = "")::Vector{Int64}
+    input_data = strip(replace(input_data, "\n" => ""))
+    return parse.(Int64, split(input_data, delimiter))
+end
+
 function digest_as_lines(input_data::String)::Vector{String}
     lines::Array{String, 1} = readlines(IOBuffer(input_data))
     return lines
