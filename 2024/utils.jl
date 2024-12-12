@@ -3,6 +3,8 @@ using HTTP
 
 DotEnv.load!()
 
+const Coordinates = Tuple{Int64, Int64}
+
 function fetch_input(day::Int, year::Int = 2024)::Union{String, Nothing}
     url = "https://adventofcode.com/$year/day/$day/input"
 
